@@ -1,0 +1,12 @@
+[project]
+name = "paper-librarian"
+version = "0.1.0"
+description = "Background cataloguing agent for the paper-librarian reading library"
+requires-python = ">=3.12"
+dependencies = [
+  "sqlite-vec>=0.1.6",
+  "fastembed>=0.4",
+]
+
+[tool.uv]
+package = false

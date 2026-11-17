@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en" data-theme="">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Paper Librarian</title>
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="mark">⚡</span>
+    <div>
+      <div class="brand-name">Paper Librarian</div>
+      <div class="brand-sub" id="statline">loading…</div>
+    </div>
+  </div>
+
+  <div class="search">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+    <input id="q" type="search" placeholder="Search titles, authors, venues, notes…  (press /)"
+           autocomplete="off" spellcheck="false">
+    <button class="sem-toggle" id="semantic" aria-pressed="false" hidden
+            title="Semantic search: match meaning, using the Librarian's notes and summaries">≈ meaning</button>
+    <kbd class="hint">/</kbd>
+  </div>
+
+  <div class="topbar-actions">
+    <div class="mode-switch" id="mode-switch">
+      <button data-mode="library" aria-pressed="true">Library</button>
+      <button data-mode="thesis" aria-pressed="false" title="Your LaTeX draft, with \cite links into the library">Draft</button>
+      <button data-mode="librarian" aria-pressed="false" id="mode-librarian" hidden
+              title="Ask the Librarian, reading queue, wanted PDFs">Librarian</button>
+    </div>
+    <button class="lib-chip" id="lib-chip" hidden title="Librarian status"></button>
+    <select id="sort" title="Sort order">
+      <option value="popularity">Most cited</option>
+      <option value="relevance">Best match</option>
+      <option value="year_desc">Newest</option>
+      <option value="year_asc">Oldest</option>
+      <option value="title">Title A–Z</option>
+      <option value="updated">Recently edited</option>
+    </select>
+    <button id="new-paper" class="btn" title="Add a paper by hand">+ Paper</button>
+    <button id="theme" class="btn icon" title="Toggle theme">◐</button>
+  </div>
+</header>
+
+<main class="app" id="app">
+
+  <aside class="sidebar thesis-only" id="thesis-sidebar" hidden>
+    <section class="filter-group">
+      <h3>Outline</h3>
+      <div class="outline" id="outline"></div>
+    </section>
+
+    <section class="filter-group" id="unlinked-group" hidden>
+      <h3>Needs linking <span class="count" id="unlinked-count"></span></h3>
+      <div class="facet" id="unlinked"></div>
+    </section>
+
+    <section class="filter-group" id="uncited-group" hidden>
+      <h3>In bib, not cited <span class="count" id="uncited-count"></span></h3>
+      <div class="facet facet-scroll" id="uncited"></div>
+    </section>
+
+    <section class="filter-group" id="todo-group" hidden>
+      <h3>Notes to self <span class="count" id="todo-count"></span></h3>
+      <div class="facet facet-scroll" id="todos"></div>
+    </section>
+  </aside>
+
+  <aside class="sidebar library-only" id="sidebar">
+    <section class="filter-group">
+      <h3>Quick filters</h3>
+      <div class="quick" id="quick"></div>
+    </section>
+
+    <section class="filter-group">
+      <h3>My tags <button class="clear" data-clear="tags">clear</button></h3>
+      <div class="facet facet-scroll" id="facet-tags"></div>
+    </section>
+
+    <section class="filter-group">
+      <h3>Keywords <button class="clear" data-clear="keywords">clear</button></h3>
+      <div class="facet facet-scroll" id="facet-keywords"></div>
+    </section>
+  </aside>
+
+  <section class="list-pane">
+    <div class="list-head">
+      <span id="result-count">—</span>
+      <div class="active-filters" id="active-filters"></div>
+    </div>
+    <div class="list" id="list"></div>
+    <button class="load-more" id="load-more" hidden>Load more</button>
+  </section>
+
+  <section class="thesis-pane" id="thesis-pane" hidden>
+    <div class="list-head">
+      <div class="thesis-views" id="thesis-views">
+        <button data-view="read" aria-pressed="true">Rendered</button>
+        <button data-view="pdf" aria-pressed="false">PDF</button>
+      </div>
+      <span class="thesis-meta" id="thesis-meta"></span>
+      <button class="btn icon" id="thesis-reload" title="Re-read the draft from disk">⟳</button>
+    </div>
+    <div class="thesis-body" id="thesis-body"></div>
+    <iframe class="thesis-frame" id="thesis-frame" title="Compiled draft" hidden></iframe>
+  </section>
+
+  <section class="librarian-pane" id="librarian-pane" hidden>
+    <div class="list-head">
+      <div class="thesis-views" id="lib-views">
+        <button data-lview="ask" aria-pressed="true">Ask</button>
+        <button data-lview="queue" aria-pressed="false">Reading queue</button>
+        <button data-lview="wanted" aria-pressed="false">Wanted PDFs</button>
+        <button data-lview="activity" aria-pressed="false">Activity</button>
+      </div>
+      <span class="thesis-meta" id="lib-meta"></span>
+    </div>
+    <div class="lib-body" id="lib-body"></div>
+  </section>
+
+  <section class="detail" id="detail" hidden>
+    <div class="detail-head">
+      <div class="detail-tabs">
+        <button data-tab="notes" class="tab" aria-pressed="true">Notes</button>
+        <button data-tab="pdf" class="tab" aria-pressed="false">PDF</button>
+        <button data-tab="split" class="tab" aria-pressed="false"
+                title="Two of: PDF, notes, Claude">Split</button>
+        <button data-tab="meta" class="tab" aria-pressed="false">Details</button>
+        <button data-tab="librarian" class="tab" aria-pressed="false" id="tab-librarian"
+                hidden title="What the Librarian made of this paper">Librarian</button>
+      </div>
+      <div class="detail-head-actions">
+        <button id="expand" class="btn icon" title="Widen / restore">⇔</button>
+        <button id="close-detail" class="btn icon" title="Close (Esc)">✕</button>
+      </div>
+    </div>
+    <div class="detail-body" id="detail-body"></div>
+  </section>
+
+</main>
+
+<div class="toast" id="toast" hidden></div>
+<datalist id="all-tags"></datalist>
+
+<div class="citecard" id="citecard" hidden></div>
+
+<script src="/app.js"></script>
+<script src="/thesis.js"></script>
+<script src="/librarian.js"></script>
+</body>
+</html>

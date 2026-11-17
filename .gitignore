@@ -1,0 +1,130 @@
+# ---------------------------------------------------------------------------
+# Your library — never commit this.
+# ---------------------------------------------------------------------------
+# library.db holds every note and tag you have ever written in this app. It is
+# personal, irreplaceable, and has no business in a public repo. The -wal/-shm
+# files are the live WAL sidecars; they are transient but can contain
+# not-yet-checkpointed pages of the same data.
+library.db
+library.db-wal
+library.db-shm
+library.backup-*.db
+backup-*.db
+
+# Belt and braces: any sqlite file anywhere in the tree.
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+
+# ---------------------------------------------------------------------------
+# PDFs — copyrighted, large, and not yours to redistribute.
+# ---------------------------------------------------------------------------
+# The directory itself is tracked (via papers/.gitkeep) so a fresh clone still
+# has somewhere for the app to write uploads.
+papers/*
+!papers/.gitkeep
+*.pdf
+
+# ---------------------------------------------------------------------------
+# Python
+# ---------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+
+# This project is stdlib-only and needs no virtualenv, but people make them.
+.venv/
+venv/
+env/
+
+# ---------------------------------------------------------------------------
+# Secrets and credentials
+# ---------------------------------------------------------------------------
+# Nothing in this app currently reads an API key — the chat pane shells out to
+# the `claude` CLI and uses that CLI's own stored credentials, which live in
+# your home directory, not here. These rules exist so that stays true even if
+# someone later swaps in a direct API backend.
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.p12
+*.pfx
+*.crt
+.netrc
+credentials.json
+secrets.json
+*secret*
+*_token
+.mcp.json
+
+# Claude Code / agent tooling: share .claude/settings.json if you want, but
+# never the machine-local one, which can hold paths and per-machine config.
+.claude/settings.local.json
+.claude/local/
+.claude/todos/
+.claude/shell-snapshots/
+
+# ---------------------------------------------------------------------------
+# Editor and OS noise
+# ---------------------------------------------------------------------------
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp
+*.swo
+.*.sw[a-p]
+*~
+\#*\#
+.\#*
+
+# ---------------------------------------------------------------------------
+# File-sync droppings (in case the tree lives in a synced folder)
+# ---------------------------------------------------------------------------
+.stfolder/
+.stversions/
+*.sync-conflict-*
+.nextcloudsync.log
+.~lock.*#
+
+# ---------------------------------------------------------------------------
+# LaTeX build artifacts, in case you point --draft at a .tex inside the repo
+# ---------------------------------------------------------------------------
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc
+
+# The Librarian (librarian/): your brief, its derived data, caches and secrets.
+# All of this is about YOUR research and stays out of the repo. librarian.db is
+# covered by *.db above. Only the *.template.md files are tracked.
+librarian/brief.md
+librarian/gold_set.md
+librarian/gold_report.md
+librarian/LIBRARY.md
+librarian/notes/
+librarian/cache/
+librarian/work/
+librarian/.env
+librarian/.venv/

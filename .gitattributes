@@ -1,0 +1,8 @@
+# Normalise line endings in the repo; check out native.
+* text=auto eol=lf
+
+# Binary, in case one ever gets force-added.
+*.db     binary
+*.pdf    binary
+*.png    binary
+*.jpg    binary

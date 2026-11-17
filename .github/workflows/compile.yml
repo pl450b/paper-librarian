@@ -1,0 +1,25 @@
+# The web app's promise is "python3 and nothing else", so CI checks exactly
+# that: no pip install, no venv, no dependency cache. If this job needs a
+# package to pass, the change does not belong in the web app. (The optional
+# librarian/ has its own venv and is only byte-compiled here.)
+name: compile
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  compileall:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Byte-compile every module on a bare interpreter
+        run: python3 -m compileall -q .
+      - name: Import the app without installing anything
+        run: python3 -c "import app, db, chat, thesis, librarian_link, import_bibtex; print('ok')"
+      - name: Create an empty library and import a .bib
+        run: |
+          printf '@article{k1, title={A Test Paper}, author={Doe, Jane and Roe, R.}, year={2020}, journal={J. Tests}}\n' > /tmp/t.bib
+          python3 import_bibtex.py /tmp/t.bib
+          python3 import_bibtex.py /tmp/t.bib | grep -q "added 0"
